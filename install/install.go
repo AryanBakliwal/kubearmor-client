@@ -1597,6 +1597,14 @@ func K8sUninstaller(c *k8s.Client, o Options) error {
 			fmt.Printf("CRD %s not found\n", hspName)
 		}
 
+		fmt.Printf("❌  Removing CRD %s\n", nspName)
+		if err := c.APIextClientset.ApiextensionsV1().CustomResourceDefinitions().Delete(context.Background(), nspName, metav1.DeleteOptions{}); err != nil {
+			if !strings.Contains(err.Error(), "not found") {
+				return err
+			}
+			fmt.Printf("CRD %s not found\n", nspName)
+		}
+
 		removeAnnotations(c)
 	}
 
